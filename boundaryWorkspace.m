@@ -10,6 +10,7 @@ function out = followEdge(m,pert,I)
     %currently the way this is being done has some redundant computations
     
     bs = m.bs;
+    thetas = m.thetas;
     g = m.g;
     N = m.N;
     
@@ -27,7 +28,7 @@ function out = followEdge(m,pert,I)
     end
     
     if any(edges)
-        out = [bs',g'];
+        out = [bs',thetas',g'];
 %         scatter3(g(4),g(5),g(6))
 %         drawnow
     else
