@@ -11,6 +11,8 @@ classdef Module
         energy %energy function, [b] -> U
         as %the a-links (assumed rigid)
         bs %the b-links (assumed soft)
+        a_max 
+        b_max %the maximum length for the b-links
         b0 %original bs
         thetas %angles for the constraints
         g %the config 
@@ -30,6 +32,8 @@ classdef Module
             
             a = r*sqrt(2*(1-cos(phi))+k^2);
             b = r*sqrt(2*(1-cos(phi-2*pi/N))+k^2);
+            obj.a_max = a;
+            obj.b_max = b;
             obj.as = a*ones(N,1);
             obj.bs = b*ones(N,1);
             obj.b0 = obj.bs;
@@ -142,7 +146,10 @@ classdef Module
             %whether or not it is kinematically proper, are the constraints
             %sufficiently satisfied
             
-            out = all(abs(obj.LConstraints())<1e-6);
+            constraints = all(abs(obj.LConstraints())<1e-6);
+            extension = all(obj.bs<=obj.b_max);
+            
+            out = constraints && extension;
         end
         
         function out = LConstraints(obj,thetas)
