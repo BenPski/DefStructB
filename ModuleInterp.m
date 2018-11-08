@@ -86,14 +86,14 @@ classdef ModuleInterp
             out = obj.energy(obj.bs-obj.b0);
         end
         
-        function obj = step_energy(obj,b_del)
+        function [obj,edge] = step_energy(obj,b_del)
             %take a step of length b_del in the direction that minimizes
             %the increase in energy
             U0 = obj.curr_energy();
             b0 = obj.bs;
             options = optimset('Display','off');
             b = fmincon(@(b) (obj.curr_energy(b)-U0)^2,b0,[],[],[],[],[],[],@(b) obj.stepConstraints(b0,b_del,b),options);
-            obj = obj.step(b-b0);
+            [obj,edge] = obj.step(b-b0);
         end
         
         function [c,ceq] = stepConstraints(obj,b0,b_del,b)
@@ -107,17 +107,14 @@ classdef ModuleInterp
             %the main change for the interpolating structure
             %now updating is just a matter of interpolating the data
             obj_orig = obj;
-            bs_next = obj.bs+d
+            bs_next = obj.bs+d;
             
             params = nearestNeighborInterp(obj.data(:,1:3)',obj.data(:,4:end)',bs_next);
-            params(1:obj.N)
-            params(end-5:end)
             obj.thetas = params(1:obj.N);
             obj.g = params(end-5:end);
             obj.bs = bs_next;
             
             edge = false;
-            %obj.proper();
             if ~obj.proper() %if it did not properly solve don't step
                 obj = obj_orig;
                 edge = true;
@@ -153,13 +150,8 @@ classdef ModuleInterp
         end
         
         function out = proper(obj)
-            %whether or not it is kinematically proper, are the constraints
-            %sufficiently satisfied
-            obj.LConstraints()
-            constraints = all(abs(obj.LConstraints())<1e-6)
-            extension = all(obj.bs<=obj.b_max)
-            
-            out = constraints && extension;
+            %it is proper if the bs are within the defined data
+            out = insideRegion(obj.data(:,1:3)',obj.bs);
         end
         
         function out = LConstraints(obj,thetas)
