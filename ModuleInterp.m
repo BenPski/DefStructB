@@ -43,7 +43,7 @@ classdef ModuleInterp
             
             if nargin ~= 6
                 %generate own data
-                data = exploreWorkspace(r,k,phi,N,0.1*b);
+                data = exploreWorkspace(r,k,phi,N,0.1);
                 obj.data = data;
             else %provided data            
                 obj.data = data;

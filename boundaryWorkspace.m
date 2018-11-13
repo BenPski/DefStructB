@@ -1,6 +1,8 @@
 function out = boundaryWorkspace(r,k,phi,N,pert)
     %essentially just for more convenient calling
-    out = followEdge(Module(r,k,phi,N,@(b) 0),pert,1);
+    m = Module(r,k,phi,N,@(b) 0);
+    pert = m.b_max*pert;
+    out = followEdge(m,pert,1);
 end
 
 function out = followEdge(m,pert,I)

@@ -1,5 +1,7 @@
 function out = exploreWorkspace(r,k,phi,N,pert)
-    out = exploreWorkspaceHelp(Module(r,k,phi,N,@(b) 0), pert, 1);
+    m = Module(r,k,phi,N,@(b) 0);
+    pert = m.b_max*pert;
+    out = exploreWorkspaceHelp(m, pert, 1);
 end
 
 function out = exploreWorkspaceHelp(m,pert,I)
