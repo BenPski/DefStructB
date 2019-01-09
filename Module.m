@@ -42,13 +42,17 @@ classdef Module
             obj = obj.step(zeros(N,1)); %make sure thetas are reasonable
         end
         
-        function plot(obj)
+        function plot(obj,g)
+            if nargin == 1
+                g = eye(4);
+            end
             %show the module
             hold on
             %plot the bottom
             bot = [];
             for i=1:obj.N
-                p = obj.r_vec(i);
+                p_h = g*[obj.r_vec(i);1];
+                p = p_h(1:3);
                 bot = [bot,p];
             end
             bot = [bot,bot(:,1)];
@@ -57,7 +61,8 @@ classdef Module
             %plot the top
             top = [];
             for i=1:obj.N
-                p = R(obj.g(1:3))*obj.r_vec(i)+obj.g(4:6);
+                p_h = g*[R(obj.g(1:3))*obj.r_vec(i)+obj.g(4:6);1];
+                p = p_h(1:3);
                 top = [top,p];
             end
             top = [top,top(:,1)];
@@ -162,11 +167,12 @@ classdef Module
             
             Ls = zeros(obj.N,1); %the L/circle constraints
             for i=1:obj.N
-                if i == obj.N
-                    x = obj.h(i)*obj.H(i)+obj.q_vec(i)-obj.h(1)*obj.H(1)-obj.q_vec(1);
-                else
-                    x = obj.h(i)*obj.H(i)+obj.q_vec(i)-obj.h(i+1)*obj.H(i+1)-obj.q_vec(i+1);
-                end
+                x = obj.h(i)*obj.H(i)+obj.q_vec(i)-obj.h(mod(i,obj.N)+1)*obj.H(mod(i,obj.N)+1)-obj.q_vec(mod(i,obj.N)+1);
+%                 if i == obj.N
+%                     x = obj.h(i)*obj.H(i)+obj.q_vec(i)-obj.h(1)*obj.H(1)-obj.q_vec(1);
+%                 else
+%                     x = obj.h(i)*obj.H(i)+obj.q_vec(i)-obj.h(i+1)*obj.H(i+1)-obj.q_vec(i+1);
+%                 end
                 L = obj.l^2-dot(x,x);
                 Ls(i) = L;
             end

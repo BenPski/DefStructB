@@ -51,13 +51,17 @@ classdef ModuleInterp
             
         end
         
-        function plot(obj)
+        function plot(obj,g)
+            if nargin == 1
+                g = eye(4);
+            end
             %show the module
             hold on
             %plot the bottom
             bot = [];
             for i=1:obj.N
-                p = obj.r_vec(i);
+                p_h = g*[obj.r_vec(i);1];
+                p = p_h(1:3);
                 bot = [bot,p];
             end
             bot = [bot,bot(:,1)];
@@ -66,7 +70,8 @@ classdef ModuleInterp
             %plot the top
             top = [];
             for i=1:obj.N
-                p = R(obj.g(1:3))*obj.r_vec(i)+obj.g(4:6);
+                p_h = g*[R(obj.g(1:3))*obj.r_vec(i)+obj.g(4:6);1];
+                p = p_h(1:3);
                 top = [top,p];
             end
             top = [top,top(:,1)];
