@@ -29,7 +29,7 @@ classdef StackModules
             end
         end
         
-        function [obj,edge] = step(obj,d)
+        function [obj,edges] = step(obj,d)
             %step all the modules in their different directions
             obj_orig = obj;
             j=1;
@@ -41,7 +41,7 @@ classdef StackModules
                 obj.modules(i) = obj_i;
                 edges = [edges,edge_i];
             end
-            edge = all(edges); %at an edge if all at an edge
+            %edge = all(edges); %at an edge if all at an edge
         end
         
         function obj = step_energy(obj,b_del)
@@ -71,6 +71,35 @@ classdef StackModules
             for i=1:length(obj.modules)
                 obj.modules(i).plot(g);
                 g = g*toConfig(obj.modules(i).g);
+            end
+        end
+        
+        function out = bs(obj)
+            out = [];
+            for i=1:length(obj.modules)
+                out = [out;obj.modules(i).bs];
+            end
+        end
+        
+        function out = thetas(obj)
+            out = [];
+            for i=1:length(obj.modules)
+                out = [out;obj.modules(i).thetas];
+            end
+        end
+        
+        function out = g(obj)
+            out = eye(4);
+            for i=1:length(obj.modules)
+                out = out*toConfig(obj.modules(i).g);
+            end
+            out = fromConfig(out);
+        end
+        
+        function out = N(obj)
+            out = [];
+            for i=1:length(obj.modules)
+                out = [out,obj.modules(i).N];
             end
         end
     end
