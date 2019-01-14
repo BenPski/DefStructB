@@ -6,6 +6,7 @@ classdef ModuleInterp
     
     properties
         data %the data for the workspace
+        tree %the vp-tree representing the data
         l %the length of a side on the plate
         r %the base radius
         k %the relative hight
@@ -43,11 +44,13 @@ classdef ModuleInterp
             
             if nargin ~= 6
                 %generate own data
-                data = exploreWorkspace(r,k,phi,N,0.1);
+                data = exploreWorkspace(r,k,phi,N,0.05);
                 obj.data = data;
             else %provided data            
                 obj.data = data;
             end
+            
+            obj.tree = makeVPTree(data(:,1:N)',data(:,N+1:end)');
             
         end
         
@@ -114,7 +117,10 @@ classdef ModuleInterp
             obj_orig = obj;
             bs_next = obj.bs+d;
             
-            params = nearestNeighborInterp(obj.data(:,1:3)',obj.data(:,4:end)',bs_next);
+            %params = nearestNeighborInterp(obj.data(:,1:3)',obj.data(:,4:end)',bs_next);
+            [neighs,vals] = nearestNeighborsVP(bs_next,obj.N+1,obj.tree);
+            params = baryInterp(neighs,vals,bs_next);
+            
             obj.thetas = params(1:obj.N);
             obj.g = params(end-5:end);
             obj.bs = bs_next;
@@ -156,7 +162,8 @@ classdef ModuleInterp
         
         function out = proper(obj)
             %it is proper if the bs are within the defined data
-            out = insideRegion(obj.data(:,1:3)',obj.bs);
+            %out = insideRegion(obj.data(:,1:3)',obj.bs);
+            out = insideRegionVP(obj.tree,obj.bs);
         end
         
         function out = LConstraints(obj,thetas)

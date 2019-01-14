@@ -1,0 +1,2 @@
+classdef VPEmpty < VPTree
+end
