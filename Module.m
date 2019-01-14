@@ -82,14 +82,14 @@ classdef Module
             out = obj.energy(obj.bs-obj.b0);
         end
         
-        function obj = step_energy(obj,b_del)
+        function [obj,edge] = step_energy(obj,b_del)
             %take a step of length b_del in the direction that minimizes
             %the increase in energy
             U0 = obj.curr_energy();
             b0 = obj.bs;
             options = optimset('Display','off');
             b = fmincon(@(b) (obj.curr_energy(b)-U0)^2,b0,[],[],[],[],[],[],@(b) obj.stepConstraints(b0,b_del,b),options);
-            obj = obj.step(b-b0);
+            [obj,edge] = obj.step(b-b0);
         end
         
         function [c,ceq] = stepConstraints(obj,b0,b_del,b)

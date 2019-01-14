@@ -162,8 +162,8 @@ classdef ModuleInterp
         
         function out = proper(obj)
             %it is proper if the bs are within the defined data
-            %out = insideRegion(obj.data(:,1:3)',obj.bs);
-            out = insideRegionVP(obj.tree,obj.bs);
+            out = insideRegion(obj.data(:,1:3)',obj.bs);
+            %out = insideRegionVP(obj.tree,obj.bs);
         end
         
         function out = LConstraints(obj,thetas)
