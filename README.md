@@ -25,7 +25,7 @@ N = 3;
 phi = 0;
 
 %initialize module
-m = Module(r,k,N,phi,energy);
+m = Module(r,k,phi,N,energy);
 m.plot(); %plot the module
 
 %Deform module slightly and plot again
@@ -36,8 +36,8 @@ m.step_energy(0.1).plot();
 For stacks of modules we first have to initialize the modules we are going to use and then the stack can be initialized. The stack can then be used pretty much the same as the individual modules are.
 ```matlab
 % initialize 2 modules that are the same (do not need to be the same)
-m1 = Module(r,k,N,phi,energy);
-m2 = Module(r,k,N,phi,energy);
+m1 = Module(r,k,phi,N,energy);
+m2 = Module(r,k,phi,N,energy);
 
 %initialize stack
 s = StackModules([m1,m2]);
